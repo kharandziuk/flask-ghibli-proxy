@@ -38,7 +38,7 @@ redis_client = redis.StrictRedis.from_url(
 
 @celery.on_after_configure.connect
 def setup_periodic_tasks(sender, **kwargs):
-    sender.add_periodic_task(60.0, set_cache.s(), name='set up current time')
+    sender.add_periodic_task(60.0, set_cache.s(), name='cache the data')
 
 
 def get_people_data(people_urls, film_url):
