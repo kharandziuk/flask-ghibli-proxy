@@ -14,6 +14,7 @@ CACHE_KEY_NAME = 'cache:films'
 
 app = Flask(__name__)
 
+
 def make_celery(app):
     celery = Celery(
         app.import_name,
@@ -29,8 +30,11 @@ def make_celery(app):
     celery.Task = ContextTask
     return celery
 
+
 celery = make_celery(app)
-redis_client = redis.StrictRedis.from_url(os.getenv('REDIS_URL'), decode_responses=True)
+redis_client = redis.StrictRedis.from_url(
+    os.getenv('REDIS_URL'), decode_responses=True)
+
 
 @celery.on_after_configure.connect
 def setup_periodic_tasks(sender, **kwargs):
@@ -38,16 +42,19 @@ def setup_periodic_tasks(sender, **kwargs):
 
 
 def get_people_data(people_urls, film_url):
-    # api behaves weird here: sometimes it returns a link for all the characters from all the movies
+    # api behaves weird here: sometimes it returns a link for all the
+    # characters from all the movies
     if people_urls == ['https://ghibliapi.herokuapp.com/people/']:
         people_data = requests.get(people_urls[0]).json()
-        people_data = [entry for entry in people_data if film_url in entry['films']]
+        people_data = [
+            entry for entry in people_data if film_url in entry['films']]
         return [entry['name'] for entry in people_data]
     else:
         return [
             requests.get(people_url).json()['name']
             for people_url in people_urls
         ]
+
 
 def get_films_data():
     result = []
@@ -57,6 +64,7 @@ def get_films_data():
         result.append([film['title'], people])
     return result
 
+
 @celery.task()
 def set_cache():
     films_data = get_films_data()
@@ -65,13 +73,16 @@ def set_cache():
         json.dumps(films_data)
     )
 
+
 # we need it for a first run
 if not redis_client.exists(CACHE_KEY_NAME):
     set_cache()
 
+
 @app.route('/')
 def root():
     return redirect(url_for('movies'))
+
 
 @app.route('/movies', methods=['GET'])
 def movies():
