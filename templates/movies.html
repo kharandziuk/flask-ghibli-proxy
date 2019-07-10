@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title></title>
+</head>
+<body>
+  <h2>Films:</h2>
+  <ul>
+  {% for film, people in films%}
+    <li>
+      {{film}}
+      <ul>
+        {% for person in people %}
+        <li>{{ person }}</li>
+        {% endfor %}
+      </ul>
+    </li>
+  {% endfor %}
+  </ul>
+</body>
+</html>
