@@ -74,11 +74,6 @@ def set_cache():
     )
 
 
-# we need it for a first run
-if not redis_client.exists(CACHE_KEY_NAME):
-    set_cache()
-
-
 @app.route('/')
 def root():
     return redirect(url_for('movies'))

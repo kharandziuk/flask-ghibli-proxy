@@ -8,5 +8,6 @@ To run a project:
 * `cp env.example .env`
 * install dependencies from requirements.txt
 * `docker-compose up` # if you want to use your own redis then change .env file
-* `celery -A main.celery worker -B --loglevel=info`
+* `celery -A main.celery beat -l info` run scheduler
+* `celery -A main.celery worker --loglevel=info` # run celery worker
 * `FLASK_APP=main.py flask run # it can be slow on a first run`
